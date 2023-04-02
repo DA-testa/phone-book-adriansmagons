@@ -1,4 +1,5 @@
 # python3
+import random
 
 class Query:
     def __init__(self, query):
@@ -14,33 +15,48 @@ def read_queries():
 def write_responses(result):
     print('\n'.join(result))
 
+def hash_funct(s):
+    ans = 0
+    prime = 10000002
+    bucket_count = 10
+    multiplier = random.randint(1, prime - 1)
+    for t in reversed(str(s)):
+        ans = (ans * multiplier + ord(t)) % prime
+    return ans % bucket_count
+
 def process_queries(queries):
     result = []
-    # Keep list of all existing (i.e. not deleted yet) contacts.
-    contacts = []
+   
+    buckets = [[] for _ in range(10)]
     for cur_query in queries:
-        if cur_query.type == 'add':
-            # if we already have contact with such number,
-            # we should rewrite contact's name
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    contact.name = cur_query.name
-                    break
-            else: # otherwise, just add it
-                contacts.append(cur_query)
+        if cur_query.type == 'add':   
+            numb = cur_query.number
+            hashed = hash_funct(numb)
+            bucket = buckets[hashed]
+            for e in bucket:
+                if cur_query.number == e.number:
+                    e.name = cur_query.name
+                    return  
+                 
+            buckets[hashed] = [cur_query] + bucket 
+                
         elif cur_query.type == 'del':
-            for j in range(len(contacts)):
-                if contacts[j].number == cur_query.number:
-                    contacts.pop(j)
+            hashed = hash_funct(numb)
+            bucket = buckets[hashed]
+            for j in range(len(bucket)):
+                if bucket[j].number == cur_query.number:
+                    bucket.pop(j)
                     break
         else:
             response = 'not found'
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    response = contact.name
+            for s in buckets[hashed]:
+                if cur_query.number == s.number:
+                    response = s.name
                     break
-            result.append(response)
+            result.append(response)   
     return result
+            
+    
 
 if __name__ == '__main__':
     write_responses(process_queries(read_queries()))
