@@ -1,5 +1,4 @@
 # python3
-import random
 
 class Query:
     def __init__(self, query):
@@ -7,6 +6,7 @@ class Query:
         self.number = int(query[1])
         if self.type == 'add':
             self.name = query[2]
+            
 
 def read_queries():
     n = int(input())
@@ -33,10 +33,11 @@ def process_queries(queries):
             numb = cur_query.number
             hashed = hash_funct(numb)
             bucket = buckets[hashed]
+            
             for e in bucket:
-                if cur_query.number == e.number:
+                if e.number == cur_query.number:
                     e.name = cur_query.name
-                    return  
+                    break  
                  
             buckets[hashed] = [cur_query] + bucket 
                 
@@ -44,6 +45,7 @@ def process_queries(queries):
             numb = cur_query.number
             hashed = hash_funct(numb)
             bucket = buckets[hashed]
+            # print(buckets[hashed])
             for j in range(len(bucket)):
                 if bucket[j].number == cur_query.number:
                     bucket.pop(j)
