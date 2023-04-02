@@ -41,6 +41,7 @@ def process_queries(queries):
             buckets[hashed] = [cur_query] + bucket 
                 
         elif cur_query.type == 'del':
+            numb = cur_query.number
             hashed = hash_funct(numb)
             bucket = buckets[hashed]
             for j in range(len(bucket)):
@@ -49,6 +50,8 @@ def process_queries(queries):
                     break
         else:
             response = 'not found'
+            numb = cur_query.number
+            hashed = hash_funct(numb)
             for s in buckets[hashed]:
                 if cur_query.number == s.number:
                     response = s.name
