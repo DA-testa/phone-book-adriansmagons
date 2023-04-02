@@ -19,7 +19,7 @@ def hash_funct(s):
     ans = 0
     prime = 10000002
     bucket_count = 10
-    multiplier = random.randint(1, prime - 1)
+    multiplier = 50
     for t in reversed(str(s)):
         ans = (ans * multiplier + ord(t)) % prime
     return ans % bucket_count
